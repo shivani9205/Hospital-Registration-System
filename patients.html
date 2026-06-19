@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hospital Patient Registry</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>Hospital Patient Registry</h1>
+
+    <input type="text" id="name" placeholder="Patient Name">
+    <br>
+
+    <input type="date" id="date">
+    <br>
+
+    <input type="text" id="illness" placeholder="Illness Name">
+    <br><br>
+
+    <button onclick="registerPatient()">
+        Register Patient
+    </button>
+
+    <h2>Registered Patients</h2>
+
+    <div id="result"></div>
+
+<script>
+
+async function registerPatient(){
+
+    const name = document.getElementById("name").value;
+    const date = document.getElementById("date").value;
+    const illness = document.getElementById("illness").value;
+
+    await fetch("http://localhost:3000/register",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            name,
+            date,
+            illness
+        })
+    });
+
+    showPatients();
+}
+
+async function showPatients(){
+
+    const response = await fetch("http://localhost:3000/patients");
+
+    const patients = await response.json();
+
+    let output = "";
+
+    patients.forEach(patient => {
+
+        output += `
+        <div class="patient">
+            Name: ${patient.name}<br>
+            Date: ${patient.date}<br>
+            Illness: ${patient.illness}
+        </div>
+        `;
+    });
+
+    document.getElementById("result").innerHTML = output;
+}
+
+</script>
+
+</body>
+</html>
